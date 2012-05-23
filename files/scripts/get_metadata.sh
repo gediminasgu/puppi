@@ -13,6 +13,7 @@ showhelp () {
     echo "-m <magicstring> - The string to use as *fix in custom metadata info provided "
     echo "-mc <anotherstring> - The string to use as qualifier for Maven metadata config tars"
     echo "-mj <anotherstring> - The string to use as qualifier for Maven metadata jars"
+    echo "-mz <anotherstring> - The string to use as qualifier for Maven metadata zips"
     echo "-mw <anotherstring> - The string to use as qualifier for Maven metadata wars"
 }
 
@@ -26,6 +27,9 @@ while [ $# -gt 0 ]; do
       shift 2 ;;
     -mj)
       jar_suffix=$2
+      shift 2 ;;
+    -mz)
+      zip_suffix=$2
       shift 2 ;;
     -mw)
       war_suffix=$2
@@ -75,6 +79,12 @@ case $source_type in
         jarfile=$artifact-$version.jar
     fi
 
+    if [[ x$zip_suffix != "xsuffixnotset" ]] ; then
+        zipfile=$artifact-$version-$zip_suffix.zip
+    else
+        zipfile=$artifact-$version.zip
+    fi
+
     if [[ x$war_suffix != "xsuffixnotset" ]] ; then
         warfile=$artifact-$version-$war_suffix.war
     else
@@ -87,6 +97,7 @@ case $source_type in
     # Store filenames
     save_runtime_config "warfile=$warfile"
     save_runtime_config "jarfile=$jarfile"
+    save_runtime_config "zipfile=$zipfile"
     save_runtime_config "srcfile=$srcfile" 
     save_runtime_config "configfile=$configfile" 
     ;;

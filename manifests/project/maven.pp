@@ -157,6 +157,9 @@ define puppi::project::maven (
   $jar_root                 = '',
   $jar_user                 = '',
   $jar_suffix               = 'suffixnotset',
+  $zip_root                 = '',
+  $zip_user                 = '',
+  $zip_suffix               = 'suffixnotset',
   $document_root            = '',
   $document_user            = '',
   $document_suffix          = 'suffixnotset',
@@ -212,6 +215,11 @@ define puppi::project::maven (
   $jar_real_user = $jar_user ? {
     ''      => $user,
     default => $jar_user,
+  }
+
+  $zip_real_user = $zip_user ? {
+    ''      => $user,
+    default => $zip_user,
   }
 
   $real_always_deploy = $always_deploy ? {
@@ -281,7 +289,7 @@ define puppi::project::maven (
     puppi::deploy { "${name}-Extract_Maven_Metadata":
       priority  => '22' ,
       command   => 'get_metadata.sh' ,
-      arguments => "-m $document_suffix -mc $config_suffix -mj $jar_suffix -mw $war_suffix" ,
+      arguments => "-m $document_suffix -mc $config_suffix -mj $jar_suffix -mw $war_suffix -mz $zip_suffix" ,
       user      => 'root' ,
       project   => $name ,
       enable    => $enable ,
@@ -304,6 +312,17 @@ define puppi::project::maven (
       priority  => '25' ,
       command   => 'get_maven_files.sh' ,
       arguments => "$source jarfile" ,
+      user      => 'root' ,
+      project   => $name ,
+      enable    => $enable ,
+    }
+  }
+
+  if ($zip_root != '') {
+    puppi::deploy { "${name}-Get_Maven_Files_ZIP":
+      priority  => '25' ,
+      command   => 'get_maven_files.sh' ,
+      arguments => "$source zipfile" ,
       user      => 'root' ,
       project   => $name ,
       enable    => $enable ,
@@ -360,6 +379,17 @@ define puppi::project::maven (
       priority  => '30' ,
       command   => 'archive.sh' ,
       arguments => "-b $jar_root -t jar -s move -m diff -o '$backup_rsync_options' -n $backup_retention" ,
+      user      => 'root' ,
+      project   => $name ,
+      enable    => $enable ,
+    }
+  }
+
+    if ($zip_root != '') {
+    puppi::deploy { "${name}-Backup_Existing_ZIP":
+      priority  => '30' ,
+      command   => 'archive.sh' ,
+      arguments => "-b $zip_root -t zip -s move -m diff -o '$backup_rsync_options' -n $backup_retention" ,
       user      => 'root' ,
       project   => $name ,
       enable    => $enable ,
@@ -450,6 +480,17 @@ define puppi::project::maven (
       command   => 'deploy.sh' ,
       arguments => $jar_root ,
       user      => $jar_real_user ,
+      project   => $name ,
+      enable    => $enable ,
+    }
+  }
+
+  if ($zip_root != '') {
+    puppi::deploy { "${name}-Deploy_Maven_ZIP":
+      priority  => '40' ,
+      command   => 'deploy.sh' ,
+      arguments => $zip_root ,
+      user      => $zip_real_user ,
       project   => $name ,
       enable    => $enable ,
     }
@@ -607,6 +648,17 @@ define puppi::project::maven (
       command   => 'archive.sh' ,
       arguments => "-r $jar_root -t jar -o '$backup_rsync_options'" ,
       user      => $jar_real_user ,
+      project   => $name ,
+      enable    => $enable ,
+    }
+  }
+
+  if ($zip_root != '') {
+    puppi::rollback { "${name}-Recover_ZIP":
+      priority  => '40' ,
+      command   => 'archive.sh' ,
+      arguments => "-r $zip_root -t zip -o '$backup_rsync_options'" ,
+      user      => $zip_real_user ,
       project   => $name ,
       enable    => $enable ,
     }

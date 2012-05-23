@@ -38,6 +38,13 @@ case $2 in
         cp -a $jarfile $predeploydir/$artifact.jar
         save_runtime_config "deploy_jarpath=$deploy_root/$artifact.jar"
     ;;
+    zipfile)
+        curl -s -f $1/$version/$zipfile -O
+        check_retcode
+        cp -a $zipfile $predeploydir/$artifact.zip
+		unzip $predeploydir/$artifact.zip
+        save_runtime_config "deploy_zippath=$deploy_root/"
+    ;;
     configfile)
         curl -s -f $1/$version/$configfile -O
         check_retcode
