@@ -41,9 +41,11 @@ case $2 in
     zipfile)
         curl -s -f $1/$version/$zipfile -O
         check_retcode
-        cp -a $zipfile $predeploydir/$artifact.zip
-		unzip $predeploydir/$artifact.zip
-        save_runtime_config "deploy_zippath=$deploy_root/"
+        mkdir $workdir/$project
+        cp -a $zipfile $workdir/$project/$artifact.zip
+		unzip $workdir/$project/$artifact.zip
+        check_retcode
+        save_runtime_config "deploy_zippath=$workdir/$project"
     ;;
     configfile)
         curl -s -f $1/$version/$configfile -O
