@@ -43,7 +43,7 @@ case $2 in
         check_retcode
         cp -a $zipfile $predeploydir/$artifact.zip
         cd $predeploydir
-        unzip $predeploydir/$artifact.zip
+        unzip -o -u $predeploydir/$artifact.zip
         check_retcode
         rm $predeploydir/$artifact.zip
         save_runtime_config "deploy_zippath=$predeploydir"
