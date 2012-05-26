@@ -3,7 +3,8 @@
 # Creates default system-wide checks to be used by the puppi check command
 #
 class puppi::checks {
-
+  require puppi::params
+	
   puppi::check { 'NTP_Sync':
     command  => "check_ntp -H ${puppi::params::ntp}" ,
     priority => '20' ,
@@ -46,6 +47,17 @@ class puppi::checks {
     hostwide => 'yes' ,
   }
 
-  Class['puppi::checks'] -> Class['puppi::is_installed']
+  file { "check_jmx.sh":
+    ensure => present,
+	path => "${puppi::params::checkpluginsdir}/check_jmx.sh",
+	source => "puppet:///modules/puppi/scripts/check_jmx.sh",
+  }
 
+  file { "check_jmx.jar":
+    ensure => present,
+	path => "${puppi::params::checkpluginsdir}/check_jmx.jar",
+	source => "puppet:///modules/puppi/scripts/check_jmx.jar",
+  }
+
+  Class['puppi::checks'] -> Class['puppi::is_installed']
 }

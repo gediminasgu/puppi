@@ -16,7 +16,6 @@ check_version_with_retry(){
                 fi
                 sleep 2
         done
-        echo "CRITICAL: Expected version not found."
         exit $exit_code
 }
 
