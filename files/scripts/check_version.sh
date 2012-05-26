@@ -17,10 +17,11 @@ check_version_with_retry(){
                 sleep 2
         done
         echo "CRITICAL: Expected version not found."
-		echo "Restarting Mule..."
-		/etc/init.d/mule restart
         exit $exit_code
 }
+
+echo "Restarting Mule..."
+/etc/init.d/mule restart
 
 echo "Expecting version: $version"
 check_version_with_retry $1 $2
