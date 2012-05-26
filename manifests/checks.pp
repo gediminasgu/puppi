@@ -51,6 +51,7 @@ class puppi::checks {
     ensure => present,
 	path => "${puppi::params::checkpluginsdir}/check_jmx.sh",
 	source => "puppet:///modules/puppi/scripts/check_jmx.sh",
+	mode => 755,
   }
 
   file { "check_jmx.jar":
