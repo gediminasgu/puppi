@@ -37,7 +37,7 @@ check
 
 # Manage general return code
 if [ "$EXITCRIT" = "1" ] ; then
-    exit 2
+    exit 1
 fi
 
 if [ "$EXITWARN" = "1" ] ; then
